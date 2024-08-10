@@ -1,0 +1,8 @@
+.chart-container {
+    position: absolute;
+    border: 1px solid #d1d5db;
+}
+
+.content {
+    height: auto;
+}

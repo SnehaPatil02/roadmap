@@ -1,0 +1,51 @@
+<div class="side-panel" [class.open]="isOpen">
+    <a
+        href="javascript:void(0)"
+        *ngIf="isOpen"
+        class="close-btn"
+        (click)="closePanel()"
+        >&times;</a
+    >
+    <div classs="content">
+        <span class="status-badge">
+            <span [ngClass]="getStatusClass(content)" class="status-dot"></span>
+            <span class="status-text">{{ content.status }}</span>
+        </span>
+        <div class="dropdown">
+            <button
+                class="inline-flex cursor-pointer items-center rounded-br-md rounded-tr-md border-l border-l-gray-300 bg-gray-100 p-1 px-2 text-sm text-black hover:bg-gray-200"
+                (click)="toggleDropdown()"
+            >
+                <span class="mr-0.5">Update Status</span
+                ><svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    class="lucide lucide-chevron-down h-4 w-4"
+                >
+                    <path d="m6 9 6 6 6-6"></path>
+                </svg>
+            </button>
+
+            <ul class="dropdown-menu" [class.show]="dropdownOpen">
+                <li (click)="updateStatus('done')">
+                    {{ statusString("done") }}
+                </li>
+                <li (click)="updateStatus('in progress')">
+                    {{ statusString("in progress") }}
+                </li>
+                <li (click)="updateStatus('skip')">
+                    {{ statusString("skip") }}
+                </li>
+            </ul>
+        </div>
+        <h1>{{ content.heading }}</h1>
+        <div [innerHTML]="content.content"></div>
+    </div>
+</div>

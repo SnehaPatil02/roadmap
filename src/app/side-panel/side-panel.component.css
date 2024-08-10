@@ -1,0 +1,118 @@
+.side-panel {
+    height: 100%;
+    width: 0;
+    position: fixed;
+    z-index: 1;
+    top: 0;
+    right: 0;
+    background-color: white;
+    overflow-x: visible;
+    transition: 0.5s;
+    padding-top: 30px;
+    box-shadow: -2px 0 5px rgba(0, 0, 0, 0.5);
+}
+
+.side-panel.open {
+    width: 600px; /* Adjust the width as needed */
+}
+
+.close-btn {
+    position: absolute;
+    align-items: center;
+    top: 15px;
+    right: 20px;
+    font-size: 30px;
+    border: 0.5px solid #d1d5db;
+    background-color: #f3f4f6;
+    padding: 0.25rem 0.25rem;
+    border-top-right-radius: 0.25rem;
+    border-bottom-right-radius: 0.25rem;
+}
+
+.content {
+    font-size: 1rem;
+    font-family: Arial, Helvetica, sans-serif;
+    font-weight: 400;
+    height: auto;
+    line-height: 24px;
+}
+.status-badge {
+    display: inline-flex;
+    cursor: pointer;
+    align-items: center;
+    border: 1px solid #d1d5db; /* Tailwind gray-300 */
+    background-color: #f3f4f6; /* Tailwind gray-100 */
+    font-size: 0.875rem; /* Tailwind text-sm */
+    color: #000000; /* Tailwind text-black */
+    border-bottom-right-radius: 0.375rem; /* Tailwind rounded-br-md */
+    border-top-right-radius: 0.375rem; /* Tailwind rounded-tr-md */
+}
+
+.status-dot {
+    display: inline-block;
+    width: 0.5rem; /* Tailwind h-2 w-2 */
+    height: 0.5rem; /* Tailwind h-2 w-2 */
+    background-color: #d1d5db; /* Tailwind gray-300 */
+    border-radius: 50%; /* Rounded full */
+    margin-right: 0.5rem; /* Tailwind mr-2 */
+}
+
+.status-text {
+    text-transform: capitalize;
+}
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.dropdown-menu {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background-color: white;
+    border: 1px solid #d1d5db;
+    padding: 0;
+    margin: 0;
+    list-style: none;
+    z-index: 1000;
+}
+
+.dropdown-menu.show {
+    display: inline-block;
+}
+
+.dropdown-menu li {
+    padding: 8px 12px;
+    cursor: pointer;
+}
+.dropdown-menu li:hover {
+    background-color: #f3f4f6;
+}
+.bg-green-500 {
+    background-color: #10b981;
+}
+
+.bg-yellow-500 {
+    background-color: #f59e0b;
+}
+
+.bg-red-500 {
+    background-color: #ef4444;
+}
+
+.bg-gray-300 {
+    background-color: #d1d5db;
+}
+
+.rounded-br-md {
+    border-bottom-right-radius: 0.375rem;
+}
+
+.rounded-tr-md {
+    border-top-right-radius: 0.375rem;
+}
+
+.p-1 {
+    padding: 0.25rem;
+}
