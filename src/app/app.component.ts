@@ -34,6 +34,7 @@ export class AppComponent {
         backgroundColor: "white",
       },
     },
+
     {
       id: "Learn the Fundamentals",
       label: "Learn the Fundamentals",
