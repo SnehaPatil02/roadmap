@@ -1,4 +1,4 @@
-import { Component } from "@angular/core";
+import { Component, HostListener } from "@angular/core";
 import { RouterOutlet } from "@angular/router";
 import {
   DagreNodesOnlyLayout,
@@ -7,151 +7,74 @@ import {
   PanningAxis,
 } from "@swimlane/ngx-graph";
 import { SidePanelComponent } from "./side-panel/side-panel.component";
-import { Data, DataService, Status } from "./data.service";
+import { JavaDataService } from "./shared/dataservices/java-data.service";
+import { Data, Status, DataService } from "./shared/utils/data-utils";
 import { Subject } from "rxjs";
 import { CommonModule } from "@angular/common";
+import { SharedModule } from "./shared/shared.module";
+import { AngularDataService } from "./shared/dataservices/angular-data.service";
+import { SharedDataService } from "./shared/dataservices/shared-data.service";
 
 @Component({
   selector: "app-root",
   standalone: true,
-  imports: [RouterOutlet, CommonModule, NgxGraphModule, SidePanelComponent],
+  imports: [
+    RouterOutlet,
+    CommonModule,
+    NgxGraphModule,
+    SidePanelComponent,
+    SharedModule,
+  ],
   templateUrl: "./app.component.html",
   styleUrl: "./app.component.css",
 })
 export class AppComponent {
   title = "roadmap";
   toggleOn = true;
-  content = new Data("", "");
+  content = new Data("", "", "");
+  keys: string[];
   public layout: Layout = new DagreNodesOnlyLayout();
   layoutSettings = {
     orientation: "TB",
   };
-  nodes = [
-    {
-      id: "Java",
-      label: "Java",
-      data: {
-        backgroundColor: "white",
-      },
-    },
+  nodes: any = [];
+  links: any = [];
+  constructor(public sharedDataService: SharedDataService) {
+    this.keys = Object.keys(this.sharedDataService.allData);
+  }
 
-    {
-      id: "Learn the Fundamentals",
-      label: "Learn the Fundamentals",
-      data: {
-        backgroundColor: "yellow",
-      },
-    },
-    {
-      id: "Basic Syntax",
-      label: "Basic Syntax",
-      data: {
-        backgroundColor: "orange",
-      },
-    },
+  initializegraph(dataService: DataService) {
+    let nodes: any = [];
+    let links: any = [];
+    Object.entries(dataService.data).forEach(
+      ([datapointkey, datapointvalue]: [string, Data]) => {
+        //nodes
+        nodes.push({
+          id: datapointkey,
+          label: datapointkey,
+          data: { backgroundColor: datapointvalue.backgroundColor },
+        });
 
-    {
-      id: "DataTypes, Variables",
-      label: "DataTypes, Variables",
-      data: {
-        backgroundColor: "orange",
+        //links
+        datapointvalue.targets.forEach((target) => {
+          links.push({
+            id: datapointkey + target,
+            source: datapointkey,
+            target: target,
+            label: "is parent of",
+            data: { gap: datapointvalue.gap },
+          });
+        });
       },
-    },
-    {
-      id: "Conditionals",
-      label: "Conditionals",
-      data: {
-        backgroundColor: "orange",
-      },
-    },
+    );
+    this.nodes = [...nodes];
+    this.links = [...links];
+  }
 
-    {
-      id: "Data Structures",
-      label: "Data Structures",
-      data: {
-        backgroundColor: "orange",
-      },
-    },
-    {
-      id: "OOP, Interface, Classes",
-      label: "OOP, Interface, Classes",
-      data: {
-        backgroundColor: "orange",
-      },
-    },
-    {
-      id: "Packages",
-      label: "Packages",
-      data: {
-        backgroundColor: "orange",
-      },
-    },
-    {
-      id: "Working with Files and APIs",
-      label: "Working with Files and APIs",
-      data: {
-        backgroundColor: "orange",
-      },
-    },
-    {
-      id: "Getting Deeper",
-      label: "Getting Deeper",
-      data: {
-        backgroundColor: "yellow",
-      },
-    },
-    {
-      id: "Memory Management",
-      label: "Memory Management",
-      data: {
-        backgroundColor: "orange",
-      },
-    },
-    {
-      id: "Collection Framework",
-      label: "Collection Framework",
-      data: {
-        backgroundColor: "orange",
-      },
-    },
-    {
-      id: "Serialization",
-      label: "Serialization",
-      data: {
-        backgroundColor: "orange",
-      },
-    },
-    {
-      id: "Networking & Sockets",
-      label: "Networking & Sockets",
-      data: {
-        backgroundColor: "orange",
-      },
-    },
-    {
-      id: "Generics",
-      label: "Generics",
-      data: {
-        backgroundColor: "orange",
-      },
-    },
-    {
-      id: "Build Tools",
-      label: "Build Tools",
-      data: {
-        backgroundColor: "yellow",
-      },
-    },
-    {
-      id: "Gradle",
-      label: "Gradle",
-      data: {
-        backgroundColor: "orange",
-      },
-    },
-  ];
-
-  constructor(public dataService: DataService) {}
+  loadgraph(name: string) {
+    this.sharedDataService.set(name);
+    this.initializegraph(this.sharedDataService.dataservice);
+  }
 
   zoomToFit$: Subject<any> = new Subject();
 
@@ -160,7 +83,7 @@ export class AppComponent {
   }
 
   isDone(label: string): string {
-    this.content = this.dataService.getData(label);
+    this.content = this.sharedDataService.dataservice.getData(label);
     if (this.content == undefined) {
       return "0";
     }
@@ -183,7 +106,7 @@ export class AppComponent {
   }
 
   isSkip(label: string): string {
-    this.content = this.dataService.getData(label);
+    this.content = this.sharedDataService.dataservice.getData(label);
     if (this.content == undefined) {
       return "1";
     }
@@ -198,7 +121,7 @@ export class AppComponent {
   }
 
   getFillColor(node: any): string {
-    this.content = this.dataService.getData(node.label);
+    this.content = this.sharedDataService.dataservice.getData(node.label);
     if (this.content === undefined) {
       return node.data.backgroundColor || node.data.color;
     } else if (this.content.status === Status.Skip) {
@@ -209,6 +132,22 @@ export class AppComponent {
   }
 
   getBorderColor(node: any): string {
-    return this.getFillColor(node) !== "white" ? "black" : "none";
+    this.content = this.sharedDataService.dataservice.getData(node.label);
+    if (this.content == undefined) {
+      return "none";
+    }
+    return this.content.border ? "black" : "none";
+  }
+
+  @HostListener("document:click", ["$event"])
+  onDocumentClick(event: MouseEvent): void {
+    const targetElement = event.target as HTMLElement;
+    console.log("Clicked element:", targetElement);
+
+    // Check if the click is within a specific component based on a class or attribute
+    if (targetElement.closest(".side-panel")) {
+      return;
+    } else {
+    }
   }
 }

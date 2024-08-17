@@ -2,11 +2,12 @@
     <a
         href="javascript:void(0)"
         *ngIf="isOpen"
+        class="overlay"
         class="close-btn"
         (click)="closePanel()"
         >&times;</a
     >
-    <div classs="content">
+    <div class="content">
         <span class="status-badge">
             <span [ngClass]="getStatusClass(content)" class="status-dot"></span>
             <span class="status-text">{{ content.status }}</span>

@@ -195,193 +195,103 @@
     }
 </style>
 
-<main class="main">
-    <div class="content">
-        <div class="centre">
-            <h1>Hello, {{ title }}</h1>
-            <p>Congratulations! Your app is running. 🎉</p>
+<main class="main" class="main">
+    <body class="flex min-h-screen flex-col overflow-hidden">
+        <div class="content">
+            <div class="centre">
+                <h1>Hello, {{ title }}</h1>
+                <p>Congratulations! Your app is running. 🎉</p>
+            </div>
         </div>
-    </div>
-</main>
-<ngx-graph
-    class="chart-container"
-    [view]="[1300, 700]"
-    [zoomToFit$]="zoomToFit$"
-    layout="dagreCluster"
-    [enableZoom]="false"
-    [showMiniMap]="true"
-    [links]="[
-        {
-            id: 'a',
-            source: 'Java',
-            target: 'Learn the Fundamentals',
-            label: 'is parent of',
-            data: { gap: '0' },
-        },
-        {
-            id: 'b',
-            source: 'Learn the Fundamentals',
-            target: 'Basic Syntax',
-            label: 'is parent of',
-            data: { gap: '10' },
-        },
-
-        {
-            id: 'c',
-            source: 'Learn the Fundamentals',
-            target: 'DataTypes, Variables',
-            label: 'is parent of',
-            data: { gap: '10' },
-        },
-        {
-            id: 'd',
-            source: 'Learn the Fundamentals',
-            target: 'Conditionals',
-            label: 'is parent of',
-            data: { gap: '10' },
-        },
-        {
-            id: 'e',
-            source: 'Learn the Fundamentals',
-            target: 'Data Structures',
-            label: 'is parent of',
-            data: { gap: '10' },
-        },
-        {
-            id: 'f',
-            source: 'Learn the Fundamentals',
-            target: 'OOP, Interface, Classes',
-            label: 'is parent of',
-            data: { gap: '10' },
-        },
-        {
-            id: 'g',
-            source: 'Learn the Fundamentals',
-            target: 'Packages',
-            label: 'is parent of',
-            data: { gap: '10' },
-        },
-        {
-            id: 'h',
-            source: 'Learn the Fundamentals',
-            target: 'Working with Files and APIs',
-            label: 'is parent of',
-            data: { gap: '10' },
-        },
-        {
-            id: 'i',
-            source: 'Java',
-            target: 'Getting Deeper',
-            label: 'is parent of',
-            data: { gap: '0' },
-        },
-        {
-            id: 'j',
-            source: 'Getting Deeper',
-            target: 'Memory Management',
-            label: 'is parent of',
-            data: { gap: '10' },
-        },
-        {
-            id: 'k',
-            source: 'Getting Deeper',
-            target: 'Collection Framework',
-            label: 'is parent of',
-            data: { gap: '10' },
-        },
-        {
-            id: 'l',
-            source: 'Getting Deeper',
-            target: 'Serialization',
-            label: 'is parent of',
-            data: { gap: '10' },
-        },
-        {
-            id: 'm',
-            source: 'Getting Deeper',
-            target: 'Networking & Sockets',
-            label: 'is parent of',
-            data: { gap: '10' },
-        },
-        {
-            id: 'n',
-            source: 'Getting Deeper',
-            target: 'Generics',
-            label: 'is parent of',
-            data: { gap: '10' },
-        },
-        {
-            id: 'o',
-            source: 'Java',
-            target: 'Build Tools',
-            label: 'is parent of',
-            data: { gap: '0' },
-        },
-        {
-            id: 'p',
-            source: 'Build Tools',
-            target: 'Gradle',
-            label: 'is parent of',
-            data: { gap: '10' },
-        },
-    ]"
-    [nodes]="nodes"
->
-    <ng-template #defsTemplate>
-        <svg:marker
-            id="arrow"
-            viewBox="0 -5 10 10"
-            refX="8"
-            refY="0"
-            markerWidth="4"
-            markerHeight="4"
-            orient="auto"
+        <button
+            *ngFor="let key of keys"
+            class="modern-button"
+            (click)="loadgraph(key)"
         >
-            <svg:path d="M0,-5L10,0L0,5" class="arrow-head" fill="purple" />
-        </svg:marker>
-    </ng-template>
+            {{ key | titlecase }}
+        </button>
+        <!-- <button class="modern-button" (click)="loadgraph('java')">Java</button>
+        <button class="modern-button" (click)="loadgraph('angular')">
+            Angular
+        </button> -->
+    </body>
+</main>
 
-    <ng-template #nodeTemplate let-node>
-        <svg:g class="node" (click)="sidePanel.openPanel(node.label)">
-            <svg:rect
-                [attr.width]="node.dimension.width"
-                [attr.height]="node.dimension.height"
-                [attr.fill]="getFillColor(node)"
-                [attr.stroke]="getBorderColor(node)"
-                [attr.stroke-width]="getBorderColor(node) !== 'none' ? 1 : 0"
-            />
-
-            <svg:line
-                [attr.x1]="10"
-                [attr.y1]="node.dimension.height / 1.5 - 5"
-                [attr.x2]="10 + getTextWidth(node.label)"
-                [attr.y2]="node.dimension.height / 1.5 - 5"
-                stroke="black"
-                [attr.stroke-width]="isDone(node.label)"
-            ></svg:line>
-            <svg:text
-                alignment-baseline="central"
-                [attr.x]="10"
-                [attr.y]="node.dimension.height / 1.5"
+<div [class.obscured]="sidePanel.isOpen">
+    <ngx-graph
+        class="chart-container"
+        [view]="[1300, 700]"
+        [zoomToFit$]="zoomToFit$"
+        layout="dagreCluster"
+        [enableZoom]="false"
+        [showMiniMap]="true"
+        [links]="links"
+        [nodes]="nodes"
+    >
+        <ng-template #defsTemplate>
+            <svg:marker
+                id="arrow"
+                viewBox="0 -5 10 10"
+                refX="8"
+                refY="0"
+                markerWidth="4"
+                markerHeight="4"
+                orient="auto"
             >
-                {{ node.label }}
-            </svg:text>
-        </svg:g>
-    </ng-template>
-    <ng-template #linkTemplate let-link>
-        <svg:g class="edge">
-            <svg:path
-                class="line"
-                stroke="rgb(153,0,255)"
-                stroke-width="3"
-                [attr.stroke-dasharray]="getLineDash(link.data.gap)"
-                stroke-linejoin="round"
-                stroke-linecap="round"
-                marker-end="url(#arrow)"
-            ></svg:path>
-        </svg:g>
-    </ng-template>
-</ngx-graph>
+                <svg:path d="M0,-5L10,0L0,5" class="arrow-head" fill="purple" />
+            </svg:marker>
+        </ng-template>
+
+        <ng-template #nodeTemplate let-node>
+            <svg:g class="node" (click)="sidePanel.openPanel(node.label)">
+                <svg:rect
+                    [attr.width]="node.dimension.width"
+                    [attr.height]="node.dimension.height"
+                    [attr.fill]="getFillColor(node)"
+                    [attr.stroke]="getBorderColor(node)"
+                    [attr.stroke-width]="
+                        getBorderColor(node) !== 'none' ? 1 : 0
+                    "
+                />
+
+                <svg:line
+                    [attr.x1]="10"
+                    [attr.y1]="node.dimension.height / 1.5 - 5"
+                    [attr.x2]="10 + getTextWidth(node.label)"
+                    [attr.y2]="node.dimension.height / 1.5 - 5"
+                    stroke="black"
+                    [attr.stroke-width]="isDone(node.label)"
+                ></svg:line>
+                <svg:text
+                    alignment-baseline="central"
+                    [attr.x]="10"
+                    [attr.y]="node.dimension.height / 1.5"
+                >
+                    {{ node.label }}
+                </svg:text>
+            </svg:g>
+        </ng-template>
+        <ng-template #linkTemplate let-link>
+            <svg:g class="edge">
+                <svg:path
+                    class="line"
+                    stroke="rgb(153,0,255)"
+                    stroke-width="3"
+                    [attr.stroke-dasharray]="getLineDash(link.data.gap)"
+                    stroke-linejoin="round"
+                    stroke-linecap="round"
+                    marker-end="url(#arrow)"
+                ></svg:path>
+            </svg:g>
+        </ng-template>
+    </ngx-graph>
+</div>
+<div
+    *ngIf="sidePanel.isOpen"
+    class="overlay"
+    (click)="sidePanel.closePanel()"
+></div>
 
 <app-side-panel #sidePanel></app-side-panel>
+
 <router-outlet />

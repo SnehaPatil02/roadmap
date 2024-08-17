@@ -1,7 +1,7 @@
-import { Component, Input, input } from "@angular/core";
+import { Component, ElementRef, HostListener } from "@angular/core";
 import { CommonModule } from "@angular/common";
-import { DataService, Data, Status, stringToStatus } from "../data.service";
-
+import { Data, Status, stringToStatus } from "../shared/utils/data-utils";
+import { SharedDataService } from "../shared/dataservices/shared-data.service";
 @Component({
   selector: "app-side-panel",
   standalone: true,
@@ -11,24 +11,43 @@ import { DataService, Data, Status, stringToStatus } from "../data.service";
 })
 export class SidePanelComponent {
   isOpen = false;
+
   updateGraph(): void {
     console.log("updating....");
   }
 
-  content: Data = new Data("", "");
+  content: Data = new Data("", "", "");
 
   status: string = "pending";
   dropdownOpen: boolean = false;
 
-  constructor(public dataService: DataService) {}
+  constructor(
+    public sharedDataService: SharedDataService,
+    private eRef: ElementRef,
+  ) {}
+
+  @HostListener("document:click", ["$event"])
+  onDocumentClick(event: MouseEvent): void {
+    const targetElement = event.target as HTMLElement;
+
+    if (targetElement.closest(".side-panel")) {
+      return;
+    } else {
+      if (this.isOpen == true) {
+        this.closePanel();
+      }
+    }
+  }
 
   openPanel(label: string): void {
-    this.content = this.dataService.getData(label);
+    this.content = this.sharedDataService.dataservice.getData(label);
     if (this.content == undefined) {
       return;
     }
     console.log(this.content);
-    this.isOpen = true;
+    setTimeout(() => {
+      this.isOpen = true;
+    }, 1);
   }
 
   closePanel(): void {
